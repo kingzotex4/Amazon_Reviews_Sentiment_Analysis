@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Alexa Reviews Sentiment Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 50px;
+            max-width: 900px;
+            width: 100%;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .alexa-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-card .icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .feature-card p {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .cta-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.6);
+        }
+
+        .info-text {
+            color: #666;
+            font-size: 1em;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="alexa-icon">🎙️</div>
+            <h1>Amazon Alexa Reviews</h1>
+            <h2 style="color: #764ba2; font-size: 1.8em; margin-bottom: 10px;">Sentiment Analysis</h2>
+            <p class="subtitle">Powered by Machine Learning & Natural Language Processing</p>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="icon">🤖</div>
+                <h3>AI-Powered Analysis</h3>
+                <p>Advanced XGBoost model trained on thousands of real Alexa reviews</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">⚡</div>
+                <h3>Instant Results</h3>
+                <p>Get sentiment predictions in real-time with high accuracy</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">📊</div>
+                <h3>Batch Processing</h3>
+                <p>Upload CSV files to analyze multiple reviews at once</p>
+            </div>
+        </div>
+
+        <div class="info-text">
+            <p style="text-align: center; font-size: 1.05em;">
+                This application uses advanced Natural Language Processing techniques including 
+                <strong>WordNet Lemmatization</strong>, <strong>TF-IDF Vectorization</strong>, 
+                and <strong>XGBoost Classification</strong> to accurately predict whether a review 
+                expresses positive or negative sentiment.
+            </p>
+        </div>
+
+        <div class="cta-section">
+            <a href="/predict" class="btn-primary">Start Analyzing Reviews →</a>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number">95%+</div>
+                <div class="stat-label">Accuracy</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">3000+</div>
+                <div class="stat-label">Reviews Trained</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">&lt;1s</div>
+                <div class="stat-label">Processing Time</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add route to navigate to prediction page
+        document.querySelector('.btn-primary').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = '/predict';
+        });
+    </script>
+</body>
+</html>

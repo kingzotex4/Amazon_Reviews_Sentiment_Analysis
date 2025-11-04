@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analyzer - Amazon Alexa Reviews</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h2 {
+            color: #667eea;
+            font-size: 1.5em;
+        }
+
+        .nav-link {
+            color: #764ba2;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .nav-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .card-icon {
+            font-size: 2.5em;
+        }
+
+        .card-title {
+            color: #333;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            background: #f5f7fa;
+            border: 3px dashed #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .file-input-label:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .file-name {
+            margin-top: 10px;
+            color: #666;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .result-box.positive {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .result-box.negative {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            color: white;
+        }
+
+        .result-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .result-text {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .result-subtext {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            font-size: 1.1em;
+            margin-top: 15px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 5px solid #667eea;
+        }
+
+        .info-box h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #666;
+        }
+
+        .info-box li {
+            margin-bottom: 5px;
+        }
+
+        .chart-container {
+            margin-top: 25px;
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .chart-container img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 968px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .card {
+                padding: 25px;
+            }
+
+            .card-title {
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="navbar">
+            <h2>🎙️ Alexa Sentiment Analyzer</h2>
+            <a href="/" class="nav-link">← Back to Home</a>
+        </div>
+
+        <div class="content-wrapper">
+            <!-- Text Analysis Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">💬</span>
+                    <h2 class="card-title">Analyze Single Review</h2>
+                </div>
+
+                <form id="textForm">
+                    <div class="form-group">
+                        <label class="form-label" for="reviewText">Enter Review Text:</label>
+                        <textarea 
+                            class="form-input" 
+                            id="reviewText" 
+                            name="text" 
+                            placeholder="Type or paste an Amazon Alexa review here... (e.g., 'This Alexa device is amazing! It makes my life so much easier.')"
+                            required
+                        ></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="textBtn">
+                        Analyze Sentiment
+                    </button>
+
+                    <div class="loading" id="textLoading">
+                        <div class="spinner"></div>
+                        <p>Analyzing sentiment...</p>
+                    </div>
+
+                    <div class="result-box" id="textResult">
+                        <div class="result-icon" id="textResultIcon"></div>
+                        <div class="result-text" id="textResultText"></div>
+                        <div class="result-subtext">Sentiment prediction completed</div>
+                    </div>
+                </form>
+
+                <div class="info-box">
+                    <h4>💡 How it works:</h4>
+                    <ul>
+                        <li>Text is preprocessed using WordNet Lemmatization</li>
+                        <li>TF-IDF vectorization extracts key features</li>
+                        <li>XGBoost classifier predicts sentiment</li>
+                        <li>95%+ accuracy on test data</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- File Upload Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">📁</span>
+                    <h2 class="card-title">Batch Analysis</h2>
+                </div>
+
+                <form id="fileForm">
+                    <div class="form-group">
+                        <label class="form-label">Upload CSV File:</label>
+                        <div class="file-input-wrapper">
+                            <input 
+                                type="file" 
+                                id="fileInput" 
+                                name="file" 
+                                accept=".csv"
+                                required
+                            />
+                            <label for="fileInput" class="file-input-label">
+                                <span style="font-size: 1.5em;">📤</span>
+                                <span>Choose CSV File or Drag & Drop</span>
+                            </label>
+                        </div>
+                        <div class="file-name" id="fileName"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="fileBtn">
+                        Analyze CSV File
+                    </button>
+
+                    <div class="loading" id="fileLoading">
+                        <div class="spinner"></div>
+                        <p>Processing file...</p>
+                    </div>
+
+                    <div class="result-box positive" id="fileResult" style="display:none;">
+                        <div class="result-icon">✅</div>
+                        <div class="result-text">Analysis Complete!</div>
+                        <div class="result-subtext">Your file has been processed successfully</div>
+                    </div>
+
+                    <div class="chart-container" id="chartContainer">
+                        <h3 style="color: #333; margin-bottom: 15px; text-align: center;">
+                            📊 Sentiment Distribution
+                        </h3>
+                        <img id="chartImage" src="" alt="Sentiment Chart">
+                    </div>
+                </form>
+
+                <div class="info-box">
+                    <h4>📋 CSV Format Required:</h4>
+                    <ul>
+                        <li>Must contain a column named <strong>"Sentence"</strong></li>
+                        <li>Each row should contain one review text</li>
+                        <li>Results will be downloaded automatically</li>
+                        <li>A visualization chart will be generated</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Text Form Submission
+        document.getElementById('textForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const textBtn = document.getElementById('textBtn');
+            const loading = document.getElementById('textLoading');
+            const resultBox = document.getElementById('textResult');
+            const reviewText = document.getElementById('reviewText').value;
+
+            // Show loading
+            textBtn.disabled = true;
+            loading.style.display = 'block';
+            resultBox.style.display = 'none';
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: reviewText })
+                });
+
+                const data = await response.json();
+                
+                // Hide loading
+                loading.style.display = 'none';
+                
+                // Show result
+                const resultIcon = document.getElementById('textResultIcon');
+                const resultText = document.getElementById('textResultText');
+                
+                if (data.result === 'Positive') {
+                    resultBox.className = 'result-box positive';
+                    resultIcon.textContent = '😊';
+                    resultText.textContent = 'Positive Sentiment';
+                } else {
+                    resultBox.className = 'result-box negative';
+                    resultIcon.textContent = '😞';
+                    resultText.textContent = 'Negative Sentiment';
+                }
+                
+                resultBox.style.display = 'block';
+            } catch (error) {
+                alert('Error: ' + error.message);
+                loading.style.display = 'none';
+            } finally {
+                textBtn.disabled = false;
+            }
+        });
+
+        // File Input Change
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            const fileName = e.target.files[0]?.name;
+            const fileNameDisplay = document.getElementById('fileName');
+            if (fileName) {
+                fileNameDisplay.textContent = `Selected: ${fileName}`;
+            }
+        });
+
+        // File Form Submission
+        document.getElementById('fileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fileBtn = document.getElementById('fileBtn');
+            const loading = document.getElementById('fileLoading');
+            const resultBox = document.getElementById('fileResult');
+            const chartContainer = document.getElementById('chartContainer');
+            const fileInput = document.getElementById('fileInput');
+
+            // Show loading
+            fileBtn.disabled = true;
+            loading.style.display = 'block';
+            resultBox.style.display = 'none';
+            chartContainer.style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // Get the graph from headers
+                    const graphData = response.headers.get('X-Graph');
+                    
+                    // Download the CSV
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'predictions.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+
+                    // Show success
+                    loading.style.display = 'none';
+                    resultBox.style.display = 'block';
+
+                    // Show chart if available
+                    if (graphData) {
+                        const chartImage = document.getElementById('chartImage');
+                        chartImage.src = 'data:image/png;base64,' + graphData;
+                        chartContainer.style.display = 'block';
+                    }
+                } else {
+                    throw new Error('Failed to process file');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+                loading.style.display = 'none';
+            } finally {
+                fileBtn.disabled = false;
+            }
+        });
+
+        // Drag and drop functionality
+        const fileLabel = document.querySelector('.file-input-label');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, () => {
+                fileLabel.style.background = '#667eea';
+                fileLabel.style.color = 'white';
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, () => {
+                fileLabel.style.background = '#f5f7fa';
+                fileLabel.style.color = '#667eea';
+            }, false);
+        });
+
+        fileLabel.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            document.getElementById('fileInput').files = files;
+            
+            const fileName = files[0]?.name;
+            if (fileName) {
+                document.getElementById('fileName').textContent = `Selected: ${fileName}`;
+            }
+        }, false);
+    </script>
+</body>
+</html>
