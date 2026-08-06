@@ -13,6 +13,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
 app = Flask(__name__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Initialize stopwords and remove 'not' to retain negation context
 STOPWORDS = set(stopwords.words("english"))
@@ -20,9 +21,9 @@ if 'not' in STOPWORDS:
     STOPWORDS.remove('not')
 
 # Load models once at startup
-with open("Models/xgboost_model.pkl", "rb") as f:
+with open(os.path.join(BASE_DIR, "Models", "xgboost_model.pkl"), "rb") as f:
     predictor = pickle.load(f)
-with open("Models/tfidfVectorizer.pkl", "rb") as f:
+with open(os.path.join(BASE_DIR, "Models", "tfidfVectorizer.pkl"), "rb") as f:
     tfidf_vectorizer = pickle.load(f)
 
 # Initialize lemmatizer
@@ -86,9 +87,12 @@ def predict():
             response.headers["X-Graph"] = base64.b64encode(img.getvalue()).decode("utf-8")
             return response
         
-        elif "text" in request.json:
-            text = request.json["text"]
+        payload = request.get_json(silent=True) or {}
+        if "text" in payload:
+            text = payload["text"]
             return jsonify({"result": predict_sentiment(text)})
+
+        return jsonify({"error": "Text or CSV file required"}), 400
             
     except Exception as e:
         return jsonify({"error": str(e)}), 500
